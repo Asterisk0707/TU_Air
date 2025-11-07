@@ -1,0 +1,33 @@
+/* TU_Air/tu_air/static/css/style.css */
+/* (!!! 기존 내용 모두 삭제 후, 아래 코드로 덮어쓰기 !!!) */
+
+/* * 이 파일은 이제 각 모듈을 불러오는 '진입점(Entry Point)' 역할을 합니다.
+ * 순서가 매우 중요합니다! (기본 스타일 -> 공통 -> 개별 페이지)
+ */
+
+/* 1. 기본 스타일 (base.html, 헤더, 푸터) */
+@import url("modules/01_base.css");
+
+/* 2. 공통 요소 (홈, 예매 페이지 공용 폼) */
+@import url("modules/02_common_forms.css");
+
+/* 3. 홈 페이지 전용 (index.html 배너) */
+@import url("modules/03_page_home.css");
+
+/* 4. 예매 페이지 전용 (booking.html 스텝) */
+@import url("modules/04_page_booking.css");
+
+/* 5. Flatpickr (달력) 커스텀 스타일 */
+@import url("modules/05_component_flatpickr.css");
+
+/* 6. 공항 모달 (modal) 스타일 */
+@import url("modules/06_component_modal.css");
+
+/* 7. 검색 결과 (results) 스타일 */
+@import url("modules/07_page_results.css");
+
+/* 8. 인증 (auth) 관련 (로그인, 회원가입, ID/PW 찾기) */
+@import url("modules/08_page_auth.css");
+
+/* 9. 마이페이지 (mypage) 스타일 */
+@import url("modules/09_page_mypage.css");

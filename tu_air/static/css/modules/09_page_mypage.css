@@ -1,0 +1,197 @@
+/* TU_Air/static/css/modules/09_page_mypage.css */
+
+/* --- 10. 마이페이지 (mypage.html) 스타일 --- */
+
+/* (Flash 메시지) */
+.flash-message {
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 1200px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+.flash-message.success {
+    background-color: #e6f7ff;
+    border: 1px solid #004a99;
+    color: #004a99;
+}
+.flash-message.error {
+    background-color: #fff0f0;
+    border: 1px solid #D90429;
+    color: #D90429;
+}
+
+.mypage-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+.mypage-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+.mypage-layout {
+    display: flex;
+    gap: 30px;
+}
+/* (왼쪽 탭 메뉴) */
+.mypage-nav {
+    flex-basis: 200px;
+    flex-shrink: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 10px;
+    height: fit-content; /* (높이를 내용에 맞춤) */
+}
+.mypage-tab {
+    display: block;
+    width: 100%;
+    padding: 18px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    text-align: left;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.mypage-tab:hover {
+    background-color: #f4f7f6;
+}
+.mypage-tab.active {
+    background-color: #004a99;
+    color: white;
+}
+/* (오른쪽 콘텐츠 영역) */
+.mypage-content {
+    flex-grow: 1;
+    min-width: 0; /* (flex-grow가 잘 작동하도록) */
+}
+.mypage-pane {
+    display: none; /* (JS로 제어) */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 30px 40px;
+}
+.mypage-pane.active {
+    display: block;
+}
+
+/* (내 정보 폼 스타일: _mypage_info.html) */
+.mypage-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.mypage-form {
+    max-width: 500px;
+}
+.mypage-form h3 {
+    font-size: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.form-group-mypage {
+    margin-bottom: 20px;
+}
+.form-group-mypage label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+    display: block;
+}
+.form-input-mypage, .form-input-mypage-static {
+    width: 100%;
+    height: 48px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.form-input-mypage-static {
+    background-color: #f4f7f6;
+    color: #777;
+    cursor: not-allowed;
+}
+.btn-mypage-submit {
+    padding: 12px 20px;
+    background-color: #004a99;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.mypage-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+/* (예약 내역 카드 스타일: _mypage_bookings.html) */
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.booking-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.booking-card-header {
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+.booking-status-reserved { color: #004a99; font-weight: bold; }
+.booking-status-canceled { color: #D90429; font-weight: bold; }
+.booking-status-partial_canceled { color: #888; font-weight: bold; } /* (Partial_Canceled도 추가) */
+
+/* [!!!] (신규) 'Check-In' 상태 스타일 [!!!] */
+.booking-status-check-in { color: #28a745; font-weight: bold; } /* (녹색) */
+.booking-card-body {
+    padding: 20px 30px;
+}
+.booking-card-body h4 {
+    font-size: 16px;
+    margin: 15px 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.flight-detail {
+    border-left: 3px solid #004a99;
+    padding-left: 15px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+.passenger-list, .payment-list {
+    list-style: none;
+    padding-left: 20px;
+    font-size: 15px;
+    line-height: 1.7;
+}
+.payment-status-paid { color: green; font-weight: 500; }
+.payment-status-refunded { color: #aaa; }
+.boarding-pass-status-valid { color: #004a99; font-weight: 500; }
+.boarding-pass-status-used { color: #aaa; }
+.boarding-pass-status-none { color: #D90429; font-size: 13px; }
+
+/* (아이콘 폰트 (가상)) */
+.icon-flight:before { content: '✈️'; }
+.icon-user:before { content: '👤'; }
+.icon-payment:before { content: '💳'; }

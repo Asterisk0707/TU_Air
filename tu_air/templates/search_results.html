@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+{% block title %}항공편 선택 - TU Air{% endblock %}
+
+{% block content %}
+
+{% set pax = search_info.passengers | int %}
+
+<div class="results-container">
+    
+    <div class="booking-container" id="results_search_form_container">
+        <div class="trip-type-tabs">
+            <button type="button" class="active" data-type="round_trip">왕복</button>
+            <button type="button" data-type="one_way">편도</button>
+        </div>
+
+        <form class="search-form" id="search_form" action="{{ url_for('main.search_flights') }}" method="GET">
+            
+            <input type="hidden" id="trip_type_input" name="trip_type" value="round_trip">
+            
+            <div class="booking-form-row">
+                <div class="form-group form-group-airport">
+                    <label>출발지</label>
+                    <input type="hidden" name="departure_airport" id="departure_airport" required>
+                    <button type="button" class="form-input-btn" id="select_departure_airport">
+                        <span class="placeholder">출발지 선택</span>
+                        <strong class="main-text"></strong>
+                        <span class="sub-text"></span>
+                    </button>
+                </div>
+
+                <div class="form-group form-group-airport">
+                    <label>도착지</label>
+                    <input type="hidden" name="arrival_airport" id="arrival_airport" required>
+                    <button type="button" class="form-input-btn" id="select_arrival_airport">
+                        <span class="placeholder">도착지 선택</span>
+                        <strong class="main-text"></strong>
+                        <span class="sub-text"></span>
+                    </button>
+                </div>
+
+                <div class="form-group form-group-date" id="datepicker_wrapper" data-wrap="true">
+                    <label>탑승일</label>
+                    <input type="text" class="form-input-btn" id="flight_datepicker_input" placeholder="날짜 선택" data-input readonly>
+                    <input type="hidden" id="departure_date" name="departure_date" required>
+                    <input type="hidden" id="return_date" name="return_date" required>
+                </div>
+
+                <div class="form-group form-group-pax">
+                    <label>인원</label>
+                    <input type="number" id="passenger_count" name="passenger_count" value="1" min="1" class="form-input-simple" required>
+                </div>
+                
+                <div class="form-group form-group-class">
+                    <label>좌석 등급</label>
+                    <select id="seat_class" name="seat_class" class="form-input-simple" required>
+                        <option value="Economy" selected>이코노미</option>
+                        <option value="Business">비즈니스</option>
+                        <option value="First">퍼스트</option>
+                    </select>
+                </div>
+
+                <div class="form-group form-group-submit">
+                    <button type="submit" class="btn-search-row">검색</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form id="flight_selection_form" method="POST" 
+          action="{{ url_for('booking.select_flights') }}"
+          data-trip-type="{{ search_info.trip_type }}">
+        
+        <input type="hidden" name="passenger_count" value="{{ pax }}">
+        <input type="hidden" name="seat_class" value="{{ search_info.class }}">
+
+        {% if search_info.dep_date %}
+            <h3 class="journey-title">
+                가는 편: {{ search_info.dep_city }} → {{ search_info.arr_city }}
+                <span class="journey-class-badge">{{ search_info.class }}</span>
+            </h3>
+            <div class="date-scroller-wrapper">
+                <button type="button" class="date-scroll-arrow" id="outbound_scroll_prev">&lt;</button>
+                <div class="date-scroller" id="outbound_date_scroller">
+                    </div>
+                <button type="button" class="date-scroll-arrow" id="outbound_scroll_next">&gt;</button>
+            </div>
+
+            {% if flights_outbound %}
+                <div class="flight-list">
+                    {% for flight in flights_outbound %}
+                    <label class="flight-card-simple">
+                        <div class="flight-info-col">
+                            <strong>{{ flight.Departure_Time.strftime('%H:%M') }}</strong>
+                            <span>{{ search_info.dep_city }}</span>
+                        </div>
+                        <div class="flight-duration-col">
+                            <span>{{ (flight.Arrival_Time - flight.Departure_Time).seconds // 3600 }}시간 {{ ((flight.Arrival_Time - flight.Departure_Time).seconds // 60) % 60 }}분</span>
+                            <div class="duration-line"></div>
+                            <strong>{{ flight.Flight_No }}</strong>
+                        </div>
+                        <div class="flight-info-col">
+                            <strong>{{ flight.Arrival_Time.strftime('%H:%M') }}</strong>
+                            <span>{{ search_info.arr_city }}</span>
+                        </div>
+                        <div class="flight-price-col">
+                            <span class="price-label">(총 {{ pax }}명)</span>
+                            <strong>KRW {{ "{:,.0f}".format((flight.Price|float) * pax) }}</strong>
+                        </div>
+                        <div class="flight-select-col">
+                            <input type="radio" name="outbound_flight"
+                                   value="{{ flight.Flight_ID }}|{{ flight.Price | float }}"
+                                   data-price="{{ flight.Price | float }}" required>
+                            <span class="radio-custom"></span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if not error %}
+                    <p class="no-flights-message">선택하신 날짜에 가는 편 항공편이 없습니다.</p>
+                {% endif %}
+            {% endif %}
+        {% elif not error %}
+             <p class="no-flights-message">가는 편 항공편을 조회할 수 없습니다. 검색 조건을 확인해주세요.</p>
+        {% endif %}
+
+        {% if search_info.trip_type == 'round_trip' and search_info.return_date %}
+            <h3 class="journey-title" style="margin-top: 40px;">
+                오는 편: {{ search_info.arr_city }} → {{ search_info.dep_city }}
+                <span class="journey-class-badge">{{ search_info.class }}</span>
+            </h3>
+            <div class="date-scroller-wrapper">
+                <button type="button" class="date-scroll-arrow" id="inbound_scroll_prev">&lt;</button>
+                <div class="date-scroller" id="inbound_date_scroller">
+                    </div>
+                <button type="button" class="date-scroll-arrow" id="inbound_scroll_next">&gt;</button>
+            </div>
+            
+            {% if flights_inbound %}
+                <div class="flight-list">
+                    {% for flight in flights_inbound %}
+                    <label class="flight-card-simple">
+                        <div class="flight-info-col">
+                            <strong>{{ flight.Departure_Time.strftime('%H:%M') }}</strong>
+                            <span>{{ search_info.arr_city }}</span>
+                        </div>
+                        <div class="flight-duration-col">
+                            <span>{{ (flight.Arrival_Time - flight.Departure_Time).seconds // 3600 }}시간 {{ ((flight.Arrival_Time - flight.Departure_Time).seconds // 60) % 60 }}분</span>
+                            <div class="duration-line"></div>
+                            <strong>{{ flight.Flight_No }}</strong>
+                        </div>
+                        <div class="flight-info-col">
+                            <strong>{{ flight.Arrival_Time.strftime('%H:%M') }}</strong>
+                            <span>{{ search_info.dep_city }}</span>
+                        </div>
+                        <div class="flight-price-col">
+                            <span class="price-label">(총 {{ pax }}명)</span>
+                            <strong>KRW {{ "{:,.0f}".format((flight.Price|float) * pax) }}</strong>
+                        </div>
+                        <div class="flight-select-col">
+                            <input type="radio" name="inbound_flight"
+                                   value="{{ flight.Flight_ID }}|{{ flight.Price | float }}"
+                                   data-price="{{ flight.Price | float }}" required>
+                            <span class="radio-custom"></span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if not error %}
+                    <p class="no-flights-message">선택하신 날짜에 오는 편 항공편이 없습니다.</p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if (search_info.trip_type == 'one_way' and flights_outbound) or
+              (search_info.trip_type == 'round_trip' and flights_outbound and flights_inbound) %}
+            <div class="total-summary-bar">
+                <div class="total-price-display">
+                    총 예상 결제 금액
+                    <strong id="total_price_display">KRW 0</strong>
+                </div>
+                
+                {% if g.user %}
+                    <button type="submit" class="btn-proceed" name="action" value="proceed">
+                        탑승객 정보 입력
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn-proceed-guest" name="action" value="guest">
+                        비회원으로 진행
+                    </button>
+                    <button type="submit" class="btn-proceed" name="action" value="member_login">
+                        회원으로 진행
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+    </form> 
+</div>
+{% include '_airport_modal.html' %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('main.static', filename='js/main.js') }}?v=4"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+        // (2. 날짜 스크롤 JS - 수정 불필요)
+    const currentURL = new URL(window.location.href);
+    const searchParams = currentURL.searchParams;
+    const week = ['일', '월', '화', '수', '목', '금', '토'];
+    const parseDate = (dateStr) => new Date(dateStr + 'T00:00:00');
+
+    function setupDateScroller(containerId, dateParamKey, prevBtnId, nextBtnId, otherDateParamKey) {
+        const scroller = document.getElementById(containerId);
+        if (!scroller) return;
+        const currentDateStr = searchParams.get(dateParamKey);
+        if (!currentDateStr) return;
+        const centerDate = parseDate(currentDateStr);
+        const otherDateStr = otherDateParamKey ? searchParams.get(otherDateParamKey) : null;
+        const otherDate = otherDateStr ? parseDate(otherDateStr) : null;
+
+        const navigateToDate = (newDate) => {
+            if (otherDate) {
+                if (dateParamKey === 'departure_date' && newDate > otherDate) {
+                    alert('날짜 오류: 가는 날은 오는 날보다 빠르거나 같아야 합니다.');
+                    return;
+                }
+                if (dateParamKey === 'return_date' && newDate < otherDate) {
+                    alert('날짜 오류: 오는 날은 가는 날보다 늦거나 같아야 합니다.');
+                    return;
+                }
+            }
+            const newDateStr = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}-${String(newDate.getDate()).padStart(2, '0')}`;
+            const newURL = new URL(currentURL);
+            newURL.searchParams.set(dateParamKey, newDateStr);
+            window.location.href = newURL.toString();
+        };
+
+        for (let i = -3; i <= 3; i++) {
+            const date = new Date(centerDate);
+            date.setDate(date.getDate() + i);
+            const dayOfWeek = week[date.getDay()];
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'date-scroller-item';
+            if (i === 0) { link.classList.add('active'); }
+            link.innerHTML = `<span class="day">${String(date.getDate()).padStart(2, '0')} (${dayOfWeek})</span><span class="price-mock"> </span>`;
+            link.addEventListener('click', (e) => { e.preventDefault(); navigateToDate(date); });
+            scroller.appendChild(link);
+        }
+        const activeItem = scroller.querySelector('.active');
+        if (activeItem) { scroller.scrollLeft = activeItem.offsetLeft - (scroller.offsetWidth / 2) + (activeItem.offsetWidth / 2); }
+        document.getElementById(prevBtnId).addEventListener('click', () => {
+            const prevDate = new Date(centerDate);
+            prevDate.setDate(prevDate.getDate() - 1);
+            navigateToDate(prevDate);
+        });
+        document.getElementById(nextBtnId).addEventListener('click', () => {
+            const nextDate = new Date(centerDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            navigateToDate(nextDate);
+        });
+    }
+
+    const depDateStr = searchParams.get('departure_date');
+    const retDateStr = searchParams.get('return_date');
+    const isRoundTripJS = searchParams.get('trip_type') === 'round_trip';
+
+    if (depDateStr) {
+        setupDateScroller('outbound_date_scroller', 'departure_date', 'outbound_scroll_prev', 'outbound_scroll_next', isRoundTripJS ? 'return_date' : null);
+    }
+    if (isRoundTripJS && retDateStr) {
+        setupDateScroller('inbound_date_scroller', 'return_date', 'inbound_scroll_prev', 'inbound_scroll_next', 'departure_date');
+    }
+
+    // (1. 총액 계산 JS - 수정 불필요)
+    const flightSelectionForm = document.getElementById('flight_selection_form');
+    const totalPriceDisplay = document.getElementById('total_price_display');
+    if (flightSelectionForm && totalPriceDisplay) {
+        // ... (총액 계산 로직 생략, 이전과 동일)
+        const passengerCount = parseInt(flightSelectionForm.passenger_count.value);
+        
+        const isRoundTrip = flightSelectionForm.dataset.tripType === 'round_trip';
+        flightSelectionForm.querySelectorAll('input[type="radio"]').forEach(radio => { radio.addEventListener('change', calculateTotal); });
+        function calculateTotal() {
+            const selectedOutbound = flightSelectionForm.querySelector('input[name="outbound_flight"]:checked');
+            const selectedInbound = flightSelectionForm.querySelector('input[name="inbound_flight"]:checked');
+            let outboundPrice = 0, inboundPrice = 0;
+            if (selectedOutbound) { outboundPrice = parseFloat(selectedOutbound.dataset.price); }
+            if (isRoundTrip && selectedInbound) { inboundPrice = parseFloat(selectedInbound.dataset.price); }
+            let total = (outboundPrice + inboundPrice) * passengerCount;
+            totalPriceDisplay.textContent = 'KRW ' + total.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
+        }
+        calculateTotal();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TU Air{% endblock %}</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}?v=4">
+    
+    {% block head_style %}{% endblock %}
+</head>
+<body>
+    
+    <header class="main-header">
+        <div class="header-content">
+            
+            <a href="{{ url_for('main.home') }}" class="header-logo-link">
+                <img src="{{ url_for('main.static', filename='images/logo.jpg') }}" alt="TU Air Logo" class="header-logo">
+                <span class="header-title">TU Air</span>
+            </a>
+            
+            <nav class="main-nav">
+                <a href="{{ url_for('main.booking') }}" 
+                   class="{{ 'active' if request.endpoint == 'main.booking' else '' }}">
+                   항공권 예매
+                </a>
+                <a href="#">예약 조회</a>
+            </nav>
+            
+            <div class="user-nav">
+                {% if g.user %}
+                    <span class="nav-user-name">{{ g.user.Name }}님</span>
+                    
+                    {% if session.get('user_type') == 'member' %}
+                        <a href="{{ url_for('mypage.mypage') }}">마이페이지</a>
+                    {% else %}
+                        <a href="#">직원 관리</a> {% endif %}
+                    
+                    <a href="{{ url_for('auth.logout') }}">로그아웃</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}">로그인</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 TU Air. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

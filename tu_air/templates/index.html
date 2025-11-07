@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}항공권 예매 - TU Air{% endblock %}
+
+{% block head_style %}
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    <div class="trip-type-tabs">
+        <button type="button" class="active" data-type="round_trip">왕복</button>
+        <button type="button" data-type="one_way">편도</button>
+    </div>
+
+    <form class="search-form" id="search_form" action="{{ url_for('main.search_flights') }}" method="GET">
+        
+        <input type="hidden" id="trip_type_input" name="trip_type" value="round_trip">
+        
+        <div class="booking-form-row">
+
+            <div class="form-group form-group-airport">
+                <label>출발지</label>
+                <input type="hidden" name="departure_airport" id="departure_airport" required>
+                <button type="button" class="form-input-btn" id="select_departure_airport">
+                    <span class="placeholder">출발지 선택</span>
+                    <strong class="main-text"></strong>
+                    <span class="sub-text"></span>
+                </button>
+            </div>
+
+            <div class="form-group form-group-airport">
+                <label>도착지</label>
+                <input type="hidden" name="arrival_airport" id="arrival_airport" required>
+                <button type="button" class="form-input-btn" id="select_arrival_airport">
+                    <span class="placeholder">도착지 선택</span>
+                    <strong class="main-text"></strong>
+                    <span class="sub-text"></span>
+                </button>
+            </div>
+
+            <div class="form-group form-group-date" id="datepicker_wrapper" data-wrap="true">
+                <label>탑승일</label>
+                <input type="text" class="form-input-btn" id="flight_datepicker_input" placeholder="날짜 선택" data-input readonly>
+                
+                <input type="hidden" id="departure_date" name="departure_date" required>
+                <input type="hidden" id="return_date" name="return_date" required>
+            </div>
+
+            <div class="form-group form-group-pax">
+                <label>인원</label>
+                <input type="number" id="passenger_count" name="passenger_count" value="1" min="1" class="form-input-simple" required>
+            </div>
+            
+            <div class="form-group form-group-class">
+                <label>좌석 등급</label>
+                <select id="seat_class" name="seat_class" class="form-input-simple" required>
+                    <option value="Economy" selected>이코노미</option>
+                    <option value="Business">비즈니스</option>
+                    <option value="First">퍼스트</option>
+                </select>
+            </div>
+
+            <div class="form-group form-group-submit">
+                <button type="submit" class="btn-search-row">검색</button>
+            </div>
+            
+        </div> </form>
+</div> <div class="plane-banner-container">
+    <h2 class="banner-text">당신의 다음 여정을 함께합니다.</h2>
+    
+</div>
+
+{% include '_airport_modal.html' %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('main.static', filename='js/main.js') }}?v=4"></script>
+{% endblock %}

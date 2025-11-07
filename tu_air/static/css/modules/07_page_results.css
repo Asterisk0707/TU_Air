@@ -1,0 +1,249 @@
+/* TU_Air/tu_air/static/css/modules/07_page_results.css */
+/* (!!! 기존 내용 모두 삭제 후, 아래 코드로 덮어쓰기 !!!) */
+
+/* --- 7. 항공편 선택 (search_results.html) 스타일 (V3) --- */
+
+/* (컨테이너 기본) */
+.results-container {
+    max-width: 1200px; /* (홈페이지와 너비 통일) */
+    margin: 30px auto; 
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* [!!!] (신규) 상단 검색 폼 컨테이너 스타일 [!!!] */
+/* (index.html의 .booking-container와 동일한 클래스) */
+#results_search_form_container.booking-container {
+    max-width: none; /* (부모 너비를 따름) */
+    margin: 0 0 30px 0; /* (아래쪽 여백만) */
+    padding: 20px 25px 25px 25px; /* (패딩 살짝 조정) */
+}
+
+/* (제목) */
+.journey-title { 
+    font-size: 20px; 
+    font-weight: 600; 
+    color: #333; 
+    margin-top: 30px; 
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+.journey-class-badge {
+    font-size: 14px;
+    font-weight: 600;
+    color: #004a99;
+    background-color: #e0f0ff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+
+/* [!!!] 2. 날짜 스크롤 (화살표 클릭 재검색) [!!!] */
+.date-scroller-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.date-scroll-arrow {
+    background: #fff;
+    border: none;
+    padding: 15px 15px; /* (패딩 조정) */
+    font-size: 20px; /* (사이즈 조정) */
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.date-scroll-arrow:hover {
+    background-color: #f0f4f9;
+    color: #004a99;
+}
+.date-scroller {
+    display: flex;
+    overflow-x: hidden; /* (스크롤바 완전 숨김) */
+    white-space: nowrap;
+    flex-grow: 1;
+    margin: 0; /* (화살표와의 간격 제거) */
+    /* (스크롤바 숨기기) */
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.date-scroller::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+.date-scroller-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0; /* (가로 패딩 줄임) */
+    min-width: 120px; /* (최소 너비 키움) */
+    border-right: 1px solid #eee; /* (구분선) */
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s, color 0.2s;
+    flex-shrink: 0; /* (줄어들지 않게) */
+}
+.date-scroller-item:last-child {
+    border-right: none;
+}
+.date-scroller-item:hover {
+    background-color: #f9f9f9;
+}
+.date-scroller-item.active {
+    background-color: #e0f0ff; /* (활성 날짜 배경색 변경) */
+    color: #004a99;
+    font-weight: bold;
+}
+.date-scroller-item.active .day {
+    color: #004a99;
+}
+.date-scroller-item .day {
+    font-size: 15px;
+    font-weight: 500;
+}
+.date-scroller-item .price-mock {
+    font-size: 14px;
+    color: #004a99;
+    margin-top: 5px;
+}
+
+/* [!!!] 3. 단순화된 항공편 카드 (기존과 동일) [!!!] */
+.flight-card-simple {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.flight-card-simple:hover {
+    border-color: #004a99;
+}
+.flight-card-simple:has(input[type="radio"]:checked) {
+    border-color: #D90429;
+    background-color: #fff9f9;
+}
+.flight-info-col {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    flex-basis: 100px;
+}
+.flight-info-col strong { font-size: 20px; font-weight: 700; }
+.flight-info-col span { font-size: 14px; color: #555; }
+.flight-duration-col {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 150px;
+}
+.flight-duration-col span { font-size: 13px; color: #777; }
+.flight-duration-col strong { font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+.duration-line { width: 100%; height: 1px; background-color: #ccc; margin: 5px 0; }
+.flight-price-col {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: right;
+    flex-basis: 200px;
+    border-left: 1px solid #f0f0f0;
+}
+.flight-price-col .price-label {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+}
+.flight-price-col strong {
+    font-size: 20px;
+    font-weight: 700;
+    color: #004a99;
+}
+.flight-select-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 25px;
+    border-left: 1px solid #f0f0f0;
+}
+.flight-card-simple input[type="radio"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.radio-custom {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+.flight-card-simple input[type="radio"]:checked + .radio-custom {
+    border-color: #D90429;
+    background-color: #D90429;
+    box-shadow: 0 0 0 3px #fff inset;
+}
+
+/* (4. 하단 총계 바 - 기존과 동일) */
+.total-summary-bar {
+    position: sticky;
+    bottom: 0;
+    background-color: #333;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    border-radius: 8px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+}
+.total-price-display { font-size: 18px; }
+.total-price-display strong { font-size: 28px; font-weight: 700; color: #fff; margin-left: 15px; }
+.btn-proceed, .btn-proceed-guest {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-proceed { background-color: #D90429; color: white; }
+.btn-proceed-guest { background-color: #6C757D; color: white; margin-right: 10px; }
+
+/* (5. 결과 없음 메시지) */
+.no-flights-message, .error { 
+    color: #777; font-size: 18px; text-align: center; padding: 40px; 
+    background-color: #fff; border-radius: 8px; margin-top: 20px;
+}
+.error { color: #e63946; }
+.journey-class-badge {
+    font-size: 14px;
+    font-weight: 600;
+    color: #004a99;
+    background-color: #e0f0ff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+    vertical-align: middle;
+}

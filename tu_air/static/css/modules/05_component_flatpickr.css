@@ -1,0 +1,87 @@
+/* TU_Air/static/css/modules/05_component_flatpickr.css */
+
+/* --- 5. 달력 (Flatpickr) 스타일 --- */
+.flatpickr-calendar {
+    width: 760px !important; /* 두 달 넓게 표시 */
+    font-size: 18px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 2001 !important; /* 헤더 위로 */
+}
+
+.flatpickr-months {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    font-size: 20px !important;
+    height: 50px;
+}
+
+.flatpickr-current-month {
+    font-size: 22px !important;
+    padding-top: 8px !important;
+    font-weight: 600; /* (추가) */
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    top: 5px; /* (정렬) */
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+    background-color: #f2f2f2;
+}
+
+/* [날짜 정렬] 예제 코드의 스타일을 그대로 사용 */
+.flatpickr-day {
+    height: 48px !important;
+    line-height: 48px !important;
+    font-size: 18px !important;
+    border-radius: 50% !important;
+    transition: background 0.2s, color 0.2s;
+    max-width: 48px !important; /* (7열 유지를 위해 추가) */
+}
+
+.flatpickr-day:hover {
+    background-color: #f6d6d6 !important;
+    color: #000;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background-color: #e60012 !important; /* 아시아나 빨강색 */
+    color: white !important;
+    border: none !important;
+}
+
+.flatpickr-day.inRange {
+    background-color: #ffe6e6 !important;
+    color: #000 !important;
+    border-radius: 0 !important; /* (범위) */
+}
+
+/* (당일 왕복) */
+.flatpickr-day.startRange.endRange {
+    border-radius: 50% !important; 
+}
+
+/* 오늘 날짜 표시 */
+.flatpickr-day.today {
+    border: 1px solid #e60012 !important;
+    color: #e60012 !important;
+}
+.flatpickr-day.today:hover {
+    background-color: #f6d6d6 !important;
+}
+
+/* 달력 전체 확대 */
+.flatpickr-calendar {
+    transform: scale(1.15);
+    transform-origin: top center;
+}

@@ -1,0 +1,70 @@
+<h2>예약 내역 (총 {{ bookings|length }}건)</h2>
+
+{% if bookings %}
+    <div class="booking-list">
+        {% for booking in bookings %}
+        <div class="booking-card">
+            <div class="booking-card-header">
+                <strong>예약 번호: {{ booking.Booking_ID }}</strong>
+                <span>예약일: {{ booking.Booking_Date.strftime('%Y-%m-%d') }}</span>
+                <span class="booking-status-{{ booking.Status|lower }}">{{ booking.Status }}</span>
+            </div>
+            
+            <div class="booking-card-body">
+                <h4><i class="icon-flight"></i>항공편 정보</h4>
+                <div class="flight-detail">
+                    <strong>[가는 편]</strong> {{ booking.outbound_flight.Flight_No }}
+                    <br>
+                    {{ booking.outbound_flight.departure_airport.City }} ({{ booking.outbound_flight.Departure_Airport_Code }})
+                    → 
+                    {{ booking.outbound_flight.arrival_airport.City }} ({{ booking.outbound_flight.Arrival_Airport_Code }})
+                    <br>
+                    출발: {{ booking.outbound_flight.Departure_Time.strftime('%Y-%m-%d %H:%M') }}
+                </div>
+                {% if booking.return_flight %}
+                <div class="flight-detail">
+                    <strong>[오는 편]</strong> {{ booking.return_flight.Flight_No }}
+                    <br>
+                    {{ booking.return_flight.departure_airport.City }} ({{ booking.return_flight.Departure_Airport_Code }})
+                    → 
+                    {{ booking.return_flight.arrival_airport.City }} ({{ booking.return_flight.Arrival_Airport_Code }})
+                    <br>
+                    출발: {{ booking.return_flight.Departure_Time.strftime('%Y-%m-%d %H:%M') }}
+                </div>
+                {% endif %}
+
+                <h4><i class="icon-user"></i>탑승객 (총 {{ booking.passengers|length }}명)</h4>
+                <ul class="passenger-list">
+                    {% for pax in booking.passengers %}
+                    <li>
+                        {{ pax.Name }} ({{ pax.Date_OF_Birth }}) - 좌석: {{ pax.Seat_ID }}
+                        {% if pax.boarding_pass %}
+                            <span class="boarding-pass-status-{{ pax.boarding_pass.Status|lower }}">
+                                [탑승권: {{ pax.boarding_pass.Status }}]
+                            </span>
+                        {% else %}
+                            <span class="boarding-pass-status-none">[탑승권 미발급]</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <h4><i class="icon-payment"></i>결제 내역</h4>
+                <ul class="payment-list">
+                    {% for payment in booking.payments %}
+                    <li>
+                        결제 금액: <strong>KRW {{ "{:,.0f}".format(payment.Amount) }}</strong>
+                        ({{ payment.Payment_Date.strftime('%Y-%m-%d') }})
+                        <span class="payment-status-{{ payment.status|lower }}">[{{ payment.status }}]</span>
+                    </li>
+                    {% else %}
+                    <li>결제 내역이 없습니다.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="no-results">예약 내역이 없습니다.</p>
+{% endif %}

@@ -1,0 +1,27 @@
+/* TU_Air/static/css/modules/03_page_home.css */
+
+/* --- 3. 홈 페이지 (index.html) 배너 스타일 --- */
+.plane-banner-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto 0 auto;
+    height: 1200px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                      url("../../images/tino_plane.png");
+    background-size: cover;
+    background-position: center bottom; 
+    border-radius: 12px;
+    position: relative; 
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+.banner-text {
+    font-size: 2.5rem; 
+    font-weight: 600;
+    color: white; 
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5); 
+    text-align: center;
+    padding: 0 20px; 
+    margin: 0; 
+}

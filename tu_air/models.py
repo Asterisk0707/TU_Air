@@ -1,0 +1,129 @@
+# TU_Air/tu_air/models.py
+# (파일 전체를 덮어쓰세요)
+
+from .extensions import db
+# (Member, Staff의 해시 함수는 사용자의 이전 요청에 따라 제거된 상태입니다)
+
+class Member(db.Model):
+    __tablename__ = 'member'
+    Member_ID = db.Column(db.String(20), primary_key=True)
+    passwd = db.Column(db.String(20), nullable=False) 
+    Name = db.Column(db.String(25), nullable=False)
+    Nationality = db.Column(db.String(20), nullable=False)
+    Date_OF_Birth = db.Column(db.DATE, nullable=False)
+    Phone = db.Column(db.String(20), nullable=False)
+    Email = db.Column(db.String(30), nullable=False)
+    mileage = db.Column(db.DECIMAL(10, 2), nullable=False, default=0.00)
+
+    # --- [관계 설정 1] ---
+    # Member(1)가 Booking(N)을 가질 수 있습니다.
+    # 'bookings'라는 이름으로 Member의 예약 목록을 불러올 수 있습니다.
+    bookings = db.relationship('Booking', back_populates='member', lazy=True)
+
+    def __repr__(self):
+        return f"<Member {self.Member_ID} ({self.Name})>"
+
+class Staff(db.Model):
+    __tablename__ = 'staff' 
+    Staff_ID = db.Column(db.String(15), primary_key=True)
+    Passwd = db.Column(db.String(20), nullable=False) 
+    Name = db.Column(db.String(25), nullable=False)
+    Role = db.Column(db.Enum('Pilot', 'Co-Pilot', 'Cabin Crew', 'Engineer', 'HR', 'Scheduler', 'CEO'), nullable=False)
+    Department = db.Column(db.String(50), nullable=True)
+    def __repr__(self):
+        return f"<Staff {self.Staff_ID} ({self.Name})>"
+
+# --- [신규] Airport 모델 ---
+class Airport(db.Model):
+    __tablename__ = 'airport'
+    Airport_Code = db.Column(db.String(5), primary_key=True)
+    City = db.Column(db.String(20), nullable=False)
+    Country = db.Column(db.String(20), nullable=False)
+    Continent = db.Column(db.String(10), nullable=False)
+
+# --- [신규] Flight 모델 (Airport와 관계 설정) ---
+class Flight(db.Model):
+    __tablename__ = 'flight'
+    Flight_ID = db.Column(db.String(15), primary_key=True)
+    Flight_No = db.Column(db.String(10), nullable=False)
+    Aircraft_ID = db.Column(db.String(10), nullable=False) # (Aircraft 모델은 생략)
+    Departure_Airport_Code = db.Column(db.String(5), db.ForeignKey('airport.Airport_Code'), nullable=False)
+    Departure_Time = db.Column(db.DATETIME, nullable=False)
+    Arrival_Airport_Code = db.Column(db.String(5), db.ForeignKey('airport.Airport_Code'), nullable=False)
+    Arrival_Time = db.Column(db.DATETIME, nullable=False)
+    Flight_Status = db.Column(db.Enum('On_Time', 'Delayed', 'Canceled'), nullable=False, default='On_Time')
+    
+    # --- [관계 설정 2] ---
+    # Flight가 Airport를 'departure_airport'와 'arrival_airport'로 참조합니다.
+    departure_airport = db.relationship('Airport', foreign_keys=[Departure_Airport_Code])
+    arrival_airport = db.relationship('Airport', foreign_keys=[Arrival_Airport_Code])
+
+# --- [신규] Booking 모델 (Member, Flight와 관계 설정) ---
+class Booking(db.Model):
+    __tablename__ = 'booking'
+    Booking_ID = db.Column(db.String(15), primary_key=True)
+    Member_ID = db.Column(db.String(20), db.ForeignKey('member.Member_ID'), nullable=True)
+    Guest_ID = db.Column(db.INT, nullable=True) # (Guest 모델은 생략)
+    Outbound_Flight_ID = db.Column(db.String(15), db.ForeignKey('flight.Flight_ID'), nullable=False)
+    Return_Flight_ID = db.Column(db.String(15), db.ForeignKey('flight.Flight_ID'), nullable=True)
+    Booking_Date = db.Column(db.DATETIME, nullable=False)
+    Status = db.Column(db.Enum('Reserved', 'Check-In', 'Canceled', 'Partial_Canceled'), nullable=False, default='Reserved')
+    Passenger_num = db.Column(db.INT, nullable=False)
+
+    # --- [관계 설정 3] ---
+    # Booking(N)이 Member(1)에 속합니다.
+    member = db.relationship('Member', back_populates='bookings')
+    
+    # Booking(1)이 Flight(N)를 참조합니다.
+    outbound_flight = db.relationship('Flight', foreign_keys=[Outbound_Flight_ID])
+    return_flight = db.relationship('Flight', foreign_keys=[Return_Flight_ID])
+    
+    # Booking(1)이 Payment(N)와 Passenger(N)를 가집니다.
+    payments = db.relationship('Payment', back_populates='booking', lazy=True)
+    passengers = db.relationship('Passenger', back_populates='booking', lazy=True)
+
+# --- [신규] Passenger 모델 (Booking과 관계 설정) ---
+# (DB 스키마의 'pasenger' 오타를 그대로 사용합니다)
+class Passenger(db.Model):
+    __tablename__ = 'pasenger'
+    Booking_ID = db.Column(db.String(15), db.ForeignKey('booking.Booking_ID'), primary_key=True)
+    Flight_ID = db.Column(db.String(15), primary_key=True)
+    Seat_ID = db.Column(db.String(25), primary_key=True) # (Seat/FlightSeat 모델은 생략)
+    Name = db.Column(db.String(30), nullable=False)
+    Date_OF_Birth = db.Column(db.DATE, nullable=False)
+    
+    # --- [관계 설정 4] ---
+    booking = db.relationship('Booking', back_populates='passengers')
+    # Passenger(1)가 Boarding_Pass(1)를 가집니다.
+    boarding_pass = db.relationship('Boarding_Pass', uselist=False, back_populates='passenger')
+
+# --- [신규] Payment 모델 (Booking과 관계 설정) ---
+class Payment(db.Model):
+    __tablename__ = 'payment'
+    Payment_ID = db.Column(db.INT, primary_key=True, autoincrement=True)
+    Booking_ID = db.Column(db.String(15), db.ForeignKey('booking.Booking_ID'), nullable=False)
+    Amount = db.Column(db.DECIMAL(10, 2), nullable=False)
+    Payment_Date = db.Column(db.DATETIME, nullable=False)
+    status = db.Column(db.Enum('Paid', 'Refunded'), nullable=False, default='Paid')
+
+    # --- [관계 설정 5] ---
+    booking = db.relationship('Booking', back_populates='payments')
+
+# --- [신규] Boarding_Pass 모델 (Passenger와 관계 설정) ---
+class Boarding_Pass(db.Model):
+    __tablename__ = 'boarding_pass'
+    Booking_ID = db.Column(db.String(15), primary_key=True)
+    Flight_ID = db.Column(db.String(15), primary_key=True)
+    Seat_ID = db.Column(db.String(25), primary_key=True)
+    Boarding_Time = db.Column(db.DATETIME, nullable=False)
+    Status = db.Column(db.Enum('Valid', 'Used', 'Canceled'), nullable=False, default='Valid')
+    
+    # --- [관계 설정 6] ---
+    # Boarding_Pass가 Passenger의 복합 키를 참조합니다.
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['Booking_ID', 'Flight_ID', 'Seat_ID'],
+            ['pasenger.Booking_ID', 'pasenger.Flight_ID', 'pasenger.Seat_ID']
+        ),
+    )
+    passenger = db.relationship('Passenger', back_populates='boarding_pass')

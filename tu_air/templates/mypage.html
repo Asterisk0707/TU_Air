@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}마이페이지 - TU Air{% endblock %}
+
+{% block content %}
+<div class="mypage-container">
+    <h1 class="mypage-title">마이페이지</h1>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-message {{ 'error' if '오류' in messages[0] else 'success' }}">
+            {{ messages[0] }}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="mypage-layout">
+        <div class="mypage-nav">
+            <button class="mypage-tab active" data-tab="info">내 정보 관리</button>
+            <button class="mypage-tab" data-tab="bookings">예약 내역</button>
+            </div>
+
+        <div class="mypage-content">
+            <div id="tab-info" class="mypage-pane active">
+                {% include '_mypage_info.html' %}
+            </div>
+            
+            <div id="tab-bookings" class="mypage-pane">
+                {% include '_mypage_bookings.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.mypage-tab');
+    const panes = document.querySelectorAll('.mypage-pane');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // 모든 탭과 패널에서 active 클래스 제거
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
+
+            // 클릭된 탭과 해당 패널에 active 클래스 추가
+            tab.classList.add('active');
+            const targetPane = document.getElementById('tab-' + tab.dataset.tab);
+            targetPane.classList.add('active');
+        });
+    });
+});
+</script>
+{% endblock %}

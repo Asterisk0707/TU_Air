@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}회원가입 - TU Air{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <h1 class="register-title">회원가입</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-error">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="register-form" method="POST" action="{{ url_for('auth.register') }}" id="register_form">
+        
+        <div class="form-group-register">
+            <label for="member_id">아이디 (7~20자)</label>
+            <div class="id-check-wrapper">
+                <input type="text" id="member_id" name="member_id" class="form-input-register" 
+                       minlength="7" maxlength="20" required>
+                <button type="button" id="btn_check_id" class="btn-check-id">중복 검사</button>
+            </div>
+            <span id="id_check_message" class="form-message"></span>
+            <input type="hidden" id="id_check_passed" value="false">
+        </div>
+
+        <div class="form-group-register">
+            <label for="password">비밀번호 (20자 이내)</label>
+            <input type="password" id="password" name="password" class="form-input-register" 
+                   maxlength="20" required>
+        </div>
+
+        <div class="form-group-register">
+            <label for="password_confirm">비밀번호 확인</label>
+            <input type="password" id="password_confirm" name="password_confirm" class="form-input-register" 
+                   maxlength="20" required>
+            <span id="password_check_message" class="form-message"></span>
+        </div>
+
+        <hr class="register-divider">
+
+        <div class="form-group-register">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" class="form-input-register" required>
+        </div>
+
+        <div class="form-group-register">
+            <label for="nationality">국적</label>
+            <input type="text" id="nationality" name="nationality" class="form-input-register" required>
+        </div>
+
+        <div class="form-group-register">
+            <label>생년월일</label>
+            <div class="dob-wrapper">
+                <select id="dob_year" name="dob_year" class="form-input-register dob-select" required>
+                    <option value="" disabled selected>출생 연도</option>
+                </select>
+                <select id="dob_month" name="dob_month" class="form-input-register dob-select" required>
+                    <option value="" disabled selected>월</option>
+                </select>
+                <select id="dob_day" name="dob_day" class="form-input-register dob-select" required>
+                    <option value="" disabled selected>일</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-register">
+            <label for="phone">휴대전화</label>
+            <input type="tel" id="phone" name="phone" class="form-input-register" placeholder="예: 010-1234-5678" required>
+        </div>
+
+        <div class="form-group-register">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" class="form-input-register" placeholder="예: tuair@example.com" required>
+        </div>
+        
+        <button type="submit" class="btn-register-submit">가입하기</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- 1. 생년월일 (DOB) 드롭다운 채우기 ---
+    const yearSelect = document.getElementById('dob_year');
+    const monthSelect = document.getElementById('dob_month');
+    const daySelect = document.getElementById('dob_day');
+
+    // (1) 연도 채우기 (1920년 ~ 현재 연도)
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear; i >= 1920; i--) {
+        let option = new Option(i + "년", i);
+        yearSelect.add(option);
+    }
+    // (2) 월 채우기
+    for (let i = 1; i <= 12; i++) {
+        let option = new Option(i + "월", i);
+        monthSelect.add(option);
+    }
+    // (3) 일 기본값 (31일)
+    function populateDays(daysInMonth) {
+        daySelect.innerHTML = '<option value="" disabled selected>일</option>';
+        for (let i = 1; i <= daysInMonth; i++) {
+            let option = new Option(i + "일", i);
+            daySelect.add(option);
+        }
+    }
+    populateDays(31); // (기본값)
+
+    // (4) 월/연도 변경 시 일(Day) 동적 변경 (윤년 포함)
+    function updateDays() {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+        if (year && month) {
+            // (특정 월의 마지막 날짜: 0을 주면 이전 달의 마지막 날이 됨)
+            const daysInMonth = new Date(year, month, 0).getDate();
+            populateDays(daysInMonth);
+        }
+    }
+    yearSelect.addEventListener('change', updateDays);
+    monthSelect.addEventListener('change', updateDays);
+
+    // --- 2. ID 중복 검사 (AJAX) ---
+    const idInput = document.getElementById('member_id');
+    const checkIdButton = document.getElementById('btn_check_id');
+    const idMessage = document.getElementById('id_check_message');
+    const idPassedHidden = document.getElementById('id_check_passed');
+
+    // (ID 입력창이 변경되면 '검사 통과' 상태를 리셋)
+    idInput.addEventListener('input', () => {
+        idPassedHidden.value = 'false';
+        idMessage.textContent = '';
+        idMessage.className = 'form-message';
+    });
+
+    checkIdButton.addEventListener('click', () => {
+        const memberId = idInput.value;
+        
+        // (클라이언트 측 길이 검사)
+        if (memberId.length < 7 || memberId.length > 20) {
+            idMessage.textContent = '아이디는 7자 이상 20자 이내로 입력하세요.';
+            idMessage.className = 'form-message error';
+            return;
+        }
+
+        // (서버에 AJAX 요청)
+        fetch("{{ url_for('auth.check_id') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ member_id: memberId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            idMessage.textContent = data.message;
+            if (data.available) {
+                idMessage.className = 'form-message success';
+                idPassedHidden.value = 'true'; // (검사 통과)
+            } else {
+                idMessage.className = 'form-message error';
+                idPassedHidden.value = 'false';
+            }
+        })
+        .catch(err => {
+            idMessage.textContent = '확인 중 오류가 발생했습니다.';
+            idMessage.className = 'form-message error';
+        });
+    });
+
+    // --- 3. 비밀번호 확인 ---
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('password_confirm');
+    const passwordMessage = document.getElementById('password_check_message');
+
+    function validatePassword() {
+        if (passwordInput.value !== confirmInput.value) {
+            passwordMessage.textContent = '비밀번호가 일치하지 않습니다.';
+            passwordMessage.className = 'form-message error';
+        } else {
+            passwordMessage.textContent = '비밀번호가 일치합니다.';
+            passwordMessage.className = 'form-message success';
+        }
+    }
+    passwordInput.addEventListener('input', validatePassword);
+    confirmInput.addEventListener('input', validatePassword);
+
+    // --- 4. 폼 제출(Submit) 유효성 검사 ---
+    const registerForm = document.getElementById('register_form');
+    registerForm.addEventListener('submit', (event) => {
+        
+        // (1) ID 중복 검사를 통과했는지 확인
+        if (idPassedHidden.value !== 'true') {
+            event.preventDefault(); // (폼 제출 막기)
+            alert('아이디 중복 검사를 완료해야 합니다.');
+            return;
+        }
+
+        // (2) 비밀번호가 일치하는지 확인
+        if (passwordInput.value !== confirmInput.value) {
+            event.preventDefault();
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        
+        // (모두 통과하면 폼 제출)
+    });
+
+});
+</script>
+{% endblock %}
