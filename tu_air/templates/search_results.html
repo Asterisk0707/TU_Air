@@ -299,6 +299,28 @@ document.addEventListener('DOMContentLoaded', function() {
             totalPriceDisplay.textContent = 'KRW ' + total.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
         }
         calculateTotal();
+
+        flightSelectionForm.addEventListener('submit', function(event) {
+            // (1) 가는 편 검사
+            const outboundChecked = flightSelectionForm.querySelector('input[name="outbound_flight"]:checked');
+            if (!outboundChecked) {
+                alert('가는 편 항공편을 선택해 주세요.');
+                event.preventDefault(); // (제출 중단)
+                return; // (검사 종료)
+            }
+            
+            // (2) 왕복일 경우 오는 편 검사
+            // (참고: 하단 바가 보인다는 것은 왕복일 경우 오는 편이 존재한다는 뜻이므로,
+            //  단순히 :checked만 검사하면 됩니다.)
+            if (isRoundTrip) {
+                const inboundChecked = flightSelectionForm.querySelector('input[name="inbound_flight"]:checked');
+                if (!inboundChecked) {
+                    alert('오는 편 항공편을 선택해 주세요.');
+                    event.preventDefault(); // (제출 중단)
+                    return; // (검사 종료)
+                }
+            }
+        });
     }
 });
 </script>
