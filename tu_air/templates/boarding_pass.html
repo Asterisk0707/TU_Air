@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TU Air 탑승권 - {{ pax.Name }}</title>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    <style>
+        body { background-color: #e0e0e0; padding: 20px; }
+        .boarding-pass-body { padding: 0; }
+    </style>
+</head>
+<body class="boarding-pass-body">
+    
+    {% include '_boarding_pass_single.html' %}
+
+</body>
+</html>

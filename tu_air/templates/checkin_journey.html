@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}체크인 - 여정 선택{% endblock %}
+
+{% block content %}
+<div class="mypage-container"> <h1 class="mypage-title">체크인 여정 선택</h1>
+    
+    <div class="booking-card">
+        <div class="booking-card-header">
+            <strong>예약 번호: {{ booking.Booking_ID }}</strong>
+            <span class="booking-status-{{ booking.Status|lower }}">{{ booking.Status }}</span>
+        </div>
+        <div class="booking-card-body">
+            <p style="font-size: 16px; margin-bottom: 25px;">
+                체크인을 진행할 여정을 선택해 주세요.<br>
+                (항공편 출발 2시간 전까지만 가능합니다.)
+            </p>
+
+            <div class="action-box">
+                <div class="action-text">
+                    <h4>가는 편: {{ booking.outbound_flight.Departure_Airport_Code }} → {{ booking.outbound_flight.Arrival_Airport_Code }}</h4>
+                    <p>{{ booking.outbound_flight.Departure_Time.strftime('%Y-%m-%d %H:%M') }} 출발</p>
+                </div>
+                
+                {% if outbound_checked_in %}
+                    <form action="{{ url_for('checkin.cancel_checkin', booking_id=booking.Booking_ID) }}" method="POST"
+                          onsubmit="return confirm('가는 편 체크인을 취소하시겠습니까?');">
+                        <input type="hidden" name="direction" value="outbound">
+                        <button type="submit" class="btn-action secondary">
+                            체크인 취소
+                        </button>
+                    </form>
+                {% elif not outbound_time_ok %}
+                    <span class="btn-action disabled">체크인 마감</span>
+                {% else %}
+                    <a href="{{ url_for('checkin.details', booking_id=booking.Booking_ID, direction='outbound') }}" class="btn-action">
+                        가는 편 체크인
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if booking.return_flight %}
+            <div class="action-box">
+                <div class="action-text">
+                    <h4>오는 편: {{ booking.return_flight.Departure_Airport_Code }} → {{ booking.return_flight.Arrival_Airport_Code }}</h4>
+                    <p>{{ booking.return_flight.Departure_Time.strftime('%Y-%m-%d %H:%M') }} 출발</p>
+                </div>
+                
+                {% if inbound_checked_in %}
+                    <form action="{{ url_for('checkin.cancel_checkin', booking_id=booking.Booking_ID) }}" method="POST"
+                          onsubmit="return confirm('오는 편 체크인을 취소하시겠습니까?');">
+                        <input type="hidden" name="direction" value="inbound">
+                        <button type="submit" class="btn-action secondary">
+                            체크인 취소
+                        </button>
+                    </form>
+                {% elif not inbound_time_ok %}
+                    <span class="btn-action disabled">체크인 마감</span>
+                {% else %}
+                    <a href="{{ url_for('checkin.details', booking_id=booking.Booking_ID, direction='inbound') }}" class="btn-action">
+                        오는 편 체크인
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

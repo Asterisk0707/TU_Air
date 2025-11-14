@@ -28,7 +28,7 @@ def mypage():
     # 1. 진행 중인 예약 (Reserved, Check-In)
     active_bookings = Booking.query.filter(
         Booking.Member_ID == g.user.Member_ID,
-        Booking.Status.in_(['Reserved', 'Check-In'])
+        Booking.Status == 'Reserved'
     ).order_by(Booking.Booking_Date.desc()).all()
 
     # 2. 취소된 예약 (Canceled, Partial_Canceled)

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}온라인 체크인 - TU Air{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <h1 class="register-title">온라인 체크인</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-error" style="margin-bottom: 20px;">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <p style="text-align: center; font-size: 16px; margin-bottom: 25px;">
+        'Reserved' 상태의 예약만 체크인할 수 있습니다.<br>
+        (항공편 출발 2시간 전까지 가능)
+    </p>
+
+    <form class="register-form" method="POST" action="{{ url_for('checkin.index') }}">
+        <div class="form-group-register">
+            <label for="booking_id">예약 번호 (15자리)</label>
+            <input type="text" id="booking_id" name="booking_id" 
+                   class="form-input-register" 
+                   placeholder="영문, 숫자로 조합된 예약 번호를 입력하세요"
+                   maxlength="15" required>
+        </div>
+        
+        <button type="submit" class="btn-register-submit">예약 조회</button>
+    </form>
+</div>
+{% endblock %}

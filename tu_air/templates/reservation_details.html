@@ -21,15 +21,42 @@
     
     <div class="reservation-actions">
         <h3 class="reservation-actions-title">예약 관리</h3>
+
+        <div class="action-box">
+            <div class="action-text">
+                <h4>온라인 탑승권</h4>
+                <p>체크인이 완료된 여정의 탑승권을 확인합니다.</p>
+            </div>
+            
+            {% if outbound_is_checked_in %}
+                <a href="{{ url_for('reservation.view_boarding_pass_list', booking_id=booking.Booking_ID, direction='outbound') }}" 
+                   class="btn-action primary">
+                    가는 편 탑승권 보기
+                </a>
+            {% else %}
+                <span class="btn-action primary disabled">가는 편 탑승권 보기</span>
+            {% endif %}
+            
+            {% if booking.return_flight %}
+                {% if inbound_is_checked_in %}
+                    <a href="{{ url_for('reservation.view_boarding_pass_list', booking_id=booking.Booking_ID, direction='inbound') }}" 
+                       class="btn-action primary">
+                        오는 편 탑승권 보기
+                    </a>
+                {% else %}
+                    <span class="btn-action primary disabled">오는 편 탑승권 보기</span>
+                {% endif %}
+            {% endif %}
+        </div>
         
         <div class="action-box">
             <div class="action-text">
                 <h4>좌석 변경</h4>
-                <p>※선택한 좌석을 변경할 수 있습니다. (출발 2시간 전까지 가능)</p>
+                <p>※선택한 좌석을 변경할 수 있습니다. (출발 2시간 전 & 체크인 전까지 가능)</p>
             </div>
 
             {% set outbound_time_left = (booking.outbound_flight.Departure_Time - now).total_seconds() %}
-            {% if booking.Status == 'Reserved' and outbound_time_left > 7200 %}
+            {% if booking.Status == 'Reserved' and outbound_time_left > 7200 and not outbound_is_checked_in %}
                 <a href="{{ url_for('booking.select_seat', direction='outbound', change_booking_id=booking.Booking_ID) }}" class="btn-action">
                     가는 편 좌석 변경
                 </a>
@@ -39,7 +66,7 @@
 
             {% if booking.return_flight %}
                 {% set inbound_time_left = (booking.return_flight.Departure_Time - now).total_seconds() %}
-                {% if booking.Status in ['Reserved', 'Partial_Canceled'] and inbound_time_left > 7200 %}
+                {% if booking.Status in ['Reserved', 'Partial_Canceled'] and inbound_time_left > 7200 and not inbound_is_checked_in %}
                     <a href="{{ url_for('booking.select_seat', direction='inbound', change_booking_id=booking.Booking_ID) }}" class="btn-action">
                         오는 편 좌석 변경
                     </a>
@@ -52,15 +79,65 @@
         <div class="action-box">
             <div class="action-text">
                 <h4>예약 취소</h4>
-                <p>※항공권 예약을 취소합니다. 취소 규정에 따라 수수료가 부과될 수 있습니다.</p>
+                <p>항공권 예약을 취소합니다. 취소 규정에 따라 수수료가 부과될 수 있습니다.</p>
             </div>
-            <form action="{{ url_for('reservation.cancel_booking', booking_id=booking.Booking_ID) }}" method="POST"
-                  onsubmit="return confirm('정말로 이 예약을 취소하시겠습니까?');">
-                <button type="submit" class="btn-action danger">
-                    예약 취소하기
-                </button>
-            </form>
+            
+            {% if booking.Status in ['Canceled'] 
+            or (booking.return_flight and now > booking.return_flight.Departure_Time) 
+            or (not booking.return_flight and now > booking.outbound_flight.Departure_Time) %}
+                <span class="btn-action danger disabled">취소 불가</span>
+            {% else %}
+                <form action="{{ url_for('reservation.cancel_booking', booking_id=booking.Booking_ID) }}" method="POST"
+                      id="cancel_form">
+                    <button type="button" class="btn-action danger" id="btn_open_cancel_modal">
+                        예약 취소하기
+                    </button>
+                </form>
+            {% endif %}
         </div>
     </div>
 </div>
+
+{% include '_refund_policy_modal.html' %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // (모달 관련 요소 찾기)
+    const modal = document.getElementById('refund_policy_modal');
+    const openBtn = document.getElementById('btn_open_cancel_modal');
+    const closeBtn = document.getElementById('btn_modal_close');
+    const closeBtnFooter = document.getElementById('btn_modal_close_footer');
+    const confirmBtn = document.getElementById('btn_modal_confirm_cancel');
+    const cancelForm = document.getElementById('cancel_form');
+
+    // (필요한 요소가 모두 있는지 확인)
+    if (modal && openBtn && closeBtn && closeBtnFooter && confirmBtn && cancelForm) {
+        
+        // (모달 열기)
+        openBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+
+        // (모달 닫기 - 3가지 방법)
+        const closeModal = () => {
+            modal.style.display = 'none';
+        };
+        closeBtn.addEventListener('click', closeModal);
+        closeBtnFooter.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // (모달 '확인' 클릭 -> 실제 폼 제출)
+        confirmBtn.addEventListener('click', function() {
+            cancelForm.submit();
+        });
+    }
+});
+</script>
 {% endblock %}

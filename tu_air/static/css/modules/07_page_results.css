@@ -220,6 +220,10 @@
 }
 .total-price-display { font-size: 18px; }
 .total-price-display strong { font-size: 28px; font-weight: 700; color: #fff; margin-left: 15px; }
+.total-summary-buttons {
+    display: flex;
+    gap: 10px; /* (버튼 사이의 간격) */
+}
 .btn-proceed, .btn-proceed-guest {
     padding: 15px 30px;
     font-size: 18px;
@@ -227,9 +231,10 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    white-space: nowrap;
 }
 .btn-proceed { background-color: #D90429; color: white; }
-.btn-proceed-guest { background-color: #6C757D; color: white; margin-right: 10px; }
+.btn-proceed-guest { background-color: #6C757D; color: white; }
 
 /* (5. 결과 없음 메시지) */
 .no-flights-message, .error { 

@@ -31,10 +31,10 @@
     <li>
         {{ pax.Name }} ({{ pax.Date_OF_Birth.strftime('%Y-%m-%d') }})
         - 좌석: <strong>{{ pax.seat.Seat_No }}</strong>
-                        
+        
         {% if pax.boarding_pass %}
             <span class="boarding-pass-status-{{ pax.boarding_pass.Status|lower }}">
-                [탑승권: {{ pax.boarding_pass.Status }}]
+                [체크인 완료: {{ pax.boarding_pass.Status }}]
             </span>
         {% else %}
             <span class="boarding-pass-status-none">[탑승권 미발급]</span>
@@ -53,7 +53,7 @@
                         
         {% if pax.boarding_pass %}
             <span class="boarding-pass-status-{{ pax.boarding_pass.Status|lower }}">
-                [탑승권: {{ pax.boarding_pass.Status }}]
+                [체크인 완료: {{ pax.boarding_pass.Status }}]
             </span>
         {% else %}
             <span class="boarding-pass-status-none">[탑승권 미발급]</span>

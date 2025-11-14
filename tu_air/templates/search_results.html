@@ -187,18 +187,20 @@
                     <strong id="total_price_display">KRW 0</strong>
                 </div>
                 
-                {% if g.user %}
-                    <button type="submit" class="btn-proceed" name="action" value="proceed">
-                        탑승객 정보 입력
-                    </button>
-                {% else %}
-                    <button type="submit" class="btn-proceed-guest" name="action" value="guest">
-                        비회원으로 진행
-                    </button>
-                    <button type="submit" class="btn-proceed" name="action" value="member_login">
-                        회원으로 진행
-                    </button>
-                {% endif %}
+                <div class="total-summary-buttons">
+                    {% if g.user %}
+                        <button type="submit" class="btn-proceed" name="action" value="proceed">
+                            탑승객 정보 입력
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn-proceed-guest" name="action" value="guest">
+                            비회원으로 진행
+                        </button>
+                        <button type="submit" class="btn-proceed" name="action" value="member_login">
+                            회원으로 진행
+                        </button>
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
         

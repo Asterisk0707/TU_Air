@@ -1,0 +1,110 @@
+/* TU_Air/tu_air/static/css/modules/14_page_boarding_pass.css */
+/* (!!! 새 파일 !!!) */
+
+/* --- 14. 탑승권 (boarding_pass.html) 스타일 --- */
+.boarding-pass-body {
+    background-color: #e0e0e0;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.boarding-pass-container {
+    max-width: 700px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border: 1px solid #ccc;
+}
+
+.bp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 2px solid #f0f0f0;
+}
+.bp-logo {
+    height: 40px;
+    width: auto;
+}
+.bp-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+.bp-flight-info {
+    padding: 25px 30px;
+    background-color: #f9f9f9;
+}
+.bp-flight-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.bp-route-city {
+    text-align: center;
+    flex: 1;
+}
+.bp-route-city span {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    display: block;
+}
+.bp-route-arrow {
+    font-size: 30px;
+    color: #888;
+    flex-shrink: 0;
+    padding: 0 20px;
+}
+
+.bp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* (3열 그리드) */
+    gap: 20px;
+    padding: 25px 30px;
+    border-bottom: 1px dashed #ccc;
+}
+.bp-grid.times {
+    border-bottom: none;
+}
+.bp-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+.bp-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.bp-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+.bp-value.time {
+    font-size: 16px;
+    font-weight: 600;
+}
+.bp-grid-item.boarding .bp-value.main {
+    font-size: 22px;
+    font-weight: 700;
+    color: #D90429;
+}
+
+.bp-footer {
+    padding: 20px 30px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #eee;
+    text-align: center;
+    border-radius: 0 0 12px 12px;
+}
+.bp-footer-text {
+    font-size: 14px;
+    color: #555;
+}

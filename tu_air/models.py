@@ -62,8 +62,10 @@ class Flight(db.Model):
     Aircraft_ID = db.Column(db.String(10), nullable=False) # (Aircraft 모델은 생략)
     Departure_Airport_Code = db.Column(db.String(5), db.ForeignKey('airport.Airport_Code'), nullable=False)
     Departure_Time = db.Column(db.DATETIME, nullable=False)
+    Departure_Gate = db.Column(db.String(10), nullable=False)
     Arrival_Airport_Code = db.Column(db.String(5), db.ForeignKey('airport.Airport_Code'), nullable=False)
     Arrival_Time = db.Column(db.DATETIME, nullable=False)
+    Arrival_Gate = db.Column(db.String(10), nullable=False)
     Flight_Status = db.Column(db.Enum('On_Time', 'Delayed', 'Canceled'), nullable=False, default='On_Time')
     
     # --- [관계 설정 2] ---
@@ -81,7 +83,7 @@ class Booking(db.Model):
     Outbound_Flight_ID = db.Column(db.String(15), db.ForeignKey('flight.Flight_ID'), nullable=False)
     Return_Flight_ID = db.Column(db.String(15), db.ForeignKey('flight.Flight_ID'), nullable=True)
     Booking_Date = db.Column(db.DATETIME, nullable=False)
-    Status = db.Column(db.Enum('Reserved', 'Check-In', 'Canceled', 'Partial_Canceled'), nullable=False, default='Reserved')
+    Status = db.Column(db.Enum('Reserved', 'Canceled', 'Partial_Canceled'), nullable=False, default='Reserved')
     Passenger_num = db.Column(db.INT, nullable=False)
 
     # --- [관계 설정 3] ---
@@ -128,6 +130,7 @@ class Payment(db.Model):
     Payment_Date = db.Column(db.DATETIME, nullable=False)
     status = db.Column(db.Enum('Paid', 'Refunded'), nullable=False, default='Paid')
     refunded_amount = db.Column(db.DECIMAL(10, 2), nullable=False, default=0.00)
+    Refund_Date = db.Column(db.DATETIME, nullable=True, default=None)
     # --- [관계 설정 5] ---
     booking = db.relationship('Booking', back_populates='payments')
 

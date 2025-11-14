@@ -1,0 +1,66 @@
+<div class="boarding-pass-container">
+    <div class="bp-header">
+        <img src="{{ url_for('main.static', filename='images/logo.jpg') }}" alt="TU Air Logo" class="bp-logo">
+        <span class="bp-title">WEB BOARDING PASS</span>
+    </div>
+    
+    <div class="bp-flight-info">
+        <div class="bp-flight-route">
+            <div class="bp-route-city">
+                <span>{{ pax.flight.Departure_Airport_Code }}</span>
+                {{ pax.flight.departure_airport.City }}
+            </div>
+            <div class="bp-route-arrow">✈</div>
+            <div class="bp-route-city">
+                <span>{{ pax.flight.Arrival_Airport_Code }}</span>
+                {{ pax.flight.arrival_airport.City }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="bp-grid">
+        <div class="bp-grid-item">
+            <span class="bp-label">PASSENGER NAME</span>
+            <span class="bp-value">{{ pax.Name }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">FLIGHT</span>
+            <span class="bp-value">{{ pax.flight.Flight_No }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">GATE</span>
+            <span class="bp-value">{{ pax.flight.Departure_Gate }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">BOOKING ID</span>
+            <span class="bp-value">{{ pax.Booking_ID }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">CLASS</span>
+            <span class="bp-value">{{ pax.seat.Class | upper }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">SEAT</span>
+            <span class="bp-value">{{ pax.seat.Seat_No }}</span>
+        </div>
+    </div>
+    
+    <div class="bp-grid times">
+        <div class="bp-grid-item">
+            <span class="bp-label">DEPARTURE</span>
+            <span class="bp-value time">{{ pax.flight.Departure_Time.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+        <div class="bp-grid-item">
+            <span class="bp-label">ARRIVAL</span>
+            <span class="bp-value time">{{ pax.flight.Arrival_Time.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+        <div class="bp-grid-item boarding">
+            <span class="bp-label">BOARDING TIME</span>
+            <span class="bp-value time main">{{ pax.boarding_pass.Boarding_Time.strftime('%H:%M') }}</span>
+        </div>
+    </div>
+    
+    <div class="bp-footer">
+        <span class="bp-footer-text">탑승객은 출발 15분 전까지 탑승구에 도착해야 합니다.</span>
+    </div>
+</div>

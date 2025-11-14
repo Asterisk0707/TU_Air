@@ -1,0 +1,81 @@
+/* TU_Air/tu_air/static/css/modules/13_component_modal.css */
+/* (!!! 기존 내용 모두 삭제 후, 아래 코드로 덮어쓰기 - V72 !!!) */
+
+/* --- 13. 공통 모달 (Popup) 스타일 --- */
+
+/* [!!!] (수정) '#refund_policy_modal' ID 선택자 추가 [!!!] */
+#refund_policy_modal.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 3001;
+    display: none;
+    justify-content: center; align-items: center;
+}
+#refund_policy_modal .modal-content {
+    background: #fff; border-radius: 8px; width: 90%;
+    max-width: 600px; /* (V71의 600px로 수정) */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+#refund_policy_modal .modal-header {
+    padding: 15px 20px; border-bottom: 1px solid #eee;
+    display: flex; justify-content: space-between; align-items: center;
+}
+#refund_policy_modal .modal-header h3 { margin: 0; font-size: 18px; }
+#refund_policy_modal .modal-close {
+    background: none; border: none; font-size: 24px;
+    cursor: pointer; color: #888;
+}
+#refund_policy_modal .modal-body {
+    padding: 20px 25px;
+    font-size: 15px;
+    line-height: 1.6;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+#refund_policy_modal .modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 8px 8px;
+}
+#refund_policy_modal .btn-action-modal {
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #D90429;
+    color: white;
+}
+#refund_policy_modal .btn-action-modal.secondary {
+    background-color: #6C757D;
+}
+
+/* (환불 규정 리스트 스타일) */
+#refund_policy_modal .refund-policy-list {
+    list-style: none;
+    padding: 10px;
+    margin: 15px 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#refund_policy_modal .refund-policy-list li {
+    padding: 8px 5px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #ddd;
+}
+#refund_policy_modal .refund-policy-list li:last-child {
+    border-bottom: none;
+}
+#refund_policy_modal .refund-policy-list li strong {
+    font-weight: 600;
+}
+#refund_policy_modal .refund-policy-list li span {
+    font-weight: 500;
+    color: #333;
+}

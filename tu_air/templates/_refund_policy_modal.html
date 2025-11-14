@@ -1,0 +1,55 @@
+<div class="modal-overlay" id="refund_policy_modal">
+    <div class="modal-content" style="max-width: 600px;">
+        
+        <div class="modal-header">
+            <h3>항공권 환불 규정</h3>
+            <button type="button" class="modal-close" id="btn_modal_close">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>예약을 취소하시기 전에 환불 규정을 확인해 주시기 바랍니다.<br>
+                환불 금액은 항공편 출발 시각 기준으로 계산됩니다.</p>
+            
+            <ul class="refund-policy-list">
+                <li>
+                    <strong>출발 91일 이상 전</strong>
+                    <span>위약금 없음 (전액 환불)</span>
+                </li>
+                <li>
+                    <strong>출발 90일 ~ 61일 전</strong>
+                    <span>운임의 10% 위약금</span>
+                </li>
+                <li>
+                    <strong>출발 60일 ~ 31일 전</strong>
+                    <span>운임의 25% 위약금</span>
+                </li>
+                <li>
+                    <strong>출발 30일 ~ 8일 전</strong>
+                    <span>운임의 45% 위약금</span>
+                </li>
+                <li>
+                    <strong>출발 7일 ~ 24시간 전</strong>
+                    <span>운임의 70% 위약금</span>
+                </li>
+                <li>
+                    <strong>출발 24시간 이내 (당일)</strong>
+                    <span>운임의 100% 위약금 (환불 불가)</span>
+                </li>
+            </ul>
+            
+            <p style="margin-top: 15px; font-weight: 500;">
+                정말로 예약을 취소하시겠습니까?
+            </p>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-action-modal" id="btn_modal_confirm_cancel">
+                예, 취소합니다
+            </button>
+            <button type="button" class="btn-action-modal secondary" id="btn_modal_close_footer">
+                아니요
+            </button>
+        </div>
+        
+    </div>
+</div>

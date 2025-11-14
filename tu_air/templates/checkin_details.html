@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}체크인 - 탑승객 정보 입력{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <h1 class="register-title">탑승객 상세 정보 입력</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-error" style="margin-bottom: 20px;">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="register-form" method="POST" action="{{ url_for('checkin.details', booking_id=booking.Booking_ID, direction=direction) }}">
+        
+        {% for pax in passengers %}
+        <div class="passenger-form-box">
+            
+            <button type="button" class="pax-accordion-header {% if loop.first %}active{% endif %}">
+                <h2>인원 {{ loop.index }}: {{ pax.Name }}</h2>
+                <span class="pax-arrow"></span>
+            </button>
+            
+            <div class="pax-accordion-content {% if loop.first %}active{% endif %}">
+                <div class="form-group-register">
+                    <label>항공편</label>
+                    <input type="text" class="form-input-register-static" 
+                           value="{{ booking.outbound_flight.Flight_No if direction == 'outbound' else booking.return_flight.Flight_No }}" readonly>
+                </div>
+                <div class="form-group-register">
+                    <label>좌석 번호</label>
+                    <input type="text" class="form-input-register-static" 
+                           value="{{ pax.seat.Seat_No }}" readonly>
+                </div>
+                <div class="form-group-register">
+                    <label>생년월일</label>
+                    <input type="text" class="form-input-register-static" 
+                           value="{{ pax.Date_OF_Birth.strftime('%Y-%m-%d') }}" readonly>
+                </div>
+                
+                <hr class="register-divider">
+                <small class="required-note">* 는 필수항목입니다.</small>
+                
+                <div class="form-group-register">
+                    <label for="nationality_{{ loop.index0 }}">국적 *</label>
+                    <input type="text" id="nationality_{{ loop.index0 }}" name="nationality" 
+                           class="form-input-register" placeholder="예: 대한민국" 
+                           value="{{ pax.Nationality or '' }}" required>
+                </div>
+                
+                <div class="form-group-register">
+                    <label for="phone_{{ loop.index0 }}">휴대전화 *</label>
+                    <input type="tel" id="phone_{{ loop.index0 }}" name="phone" 
+                           class="form-input-register" placeholder="예: 010-1234-5678" 
+                           value="{{ pax.Phone or '' }}" required>
+                </div>
+                
+                {% if is_international %}
+                <div class="form-group-register">
+                    <label for="passport_no_{{ loop.index0 }}">여권번호 *</label>
+                    <input type="text" id="passport_no_{{ loop.index0 }}" name="passport_no" 
+                           class="form-input-register" placeholder="여권번호 입력" 
+                           value="{{ pax.Passport_No or '' }}" required>
+                </div>
+                {% endif %}
+                
+            </div> </div> {% endfor %}
+
+        <button type="submit" class="btn-register-submit">
+            온라인 탑승권 발급
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const accordionHeaders = document.querySelectorAll('.pax-accordion-header');
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('pax-accordion-content')) {
+                content.classList.toggle('active');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

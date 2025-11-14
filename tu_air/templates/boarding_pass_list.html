@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ direction_label }} 탑승권 - {{ booking.Booking_ID }}{% endblock %}
+
+{% block head_style %}
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/modules/14_page_boarding_pass.css') }}">
+    <style>
+        .all-passes-container { max-width: 760px; margin: 30px auto; }
+        .boarding-pass-container { margin-bottom: 30px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="all-passes-container">
+    <h1 class="mypage-title">
+        {{ direction_label }} 탑승권 ({{ passengers|length }}매)
+    </h1>
+    <h3 class="journey-title" style="margin-bottom: 25px;">
+        {{ flight.Flight_No }} ({{ flight.departure_airport.City }} → {{ flight.arrival_airport.City }})
+    </h3>
+    
+    {% for pax in passengers %}
+        {% include '_boarding_pass_single.html' %}
+    {% endfor %}
+</div>
+{% endblock %}

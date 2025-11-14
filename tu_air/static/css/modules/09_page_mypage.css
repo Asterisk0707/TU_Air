@@ -160,8 +160,6 @@
 .booking-status-canceled { color: #D90429; font-weight: bold; }
 .booking-status-partial_canceled { color: #888; font-weight: bold; } /* (Partial_Canceled도 추가) */
 
-/* [!!!] (신규) 'Check-In' 상태 스타일 [!!!] */
-.booking-status-check-in { color: #28a745; font-weight: bold; } /* (녹색) */
 .booking-card-body {
     padding: 20px 30px;
 }
@@ -316,4 +314,47 @@ span.btn-action.disabled { /* (span 태그도 지원) */
     font-weight: 700;
     font-size: 17px;
     color: #D90429; /* (빨간색) */
+}
+/* [!!!] (R3) 체크인 취소 버튼 스타일 [!!!] */
+.btn-action.secondary {
+    background-color: #6C757D;
+    color: white;
+}
+.btn-action.secondary:hover {
+    background-color: #5a6268;
+}
+.btn-action.success {
+    background-color: #28a745;
+    color: white;
+    cursor: default;
+}
+
+/* [!!!] (R1) '탑승권 보기' 버튼 스타일 [!!!] */
+.btn-action.primary {
+    background-color: #004a99;
+    color: white;
+}
+.btn-action.primary:hover {
+    background-color: #003366;
+}
+/* [!!!] (R1) 비활성화된 action 버튼 스타일 (primary 포함) [!!!] */
+.btn-action.disabled,
+span.btn-action.disabled,
+.btn-action.primary.disabled,
+span.btn-action.primary.disabled {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 4px;
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    color: #666;
+    margin-left: 10px;
+    text-decoration: none; /* (a 태그 대비) */
+}
+
+/* (span 태그가 <a> 태그와 동일한 패딩을 갖도록 기본값 수정) */
+span.btn-action.disabled {
+    display: inline-block; /* (span도 패딩 적용) */
 }

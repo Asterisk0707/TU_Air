@@ -1,51 +1,51 @@
 /* TU_Air/static/css/modules/06_component_modal.css */
 
 /* --- 6. 공항 모달 (_airport_modal.html) 스타일 --- */
-.modal-overlay {
+#airport_modal.modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.6); z-index: 3001;
     display: none;
     justify-content: center; align-items: center;
 }
-.modal-content {
+#airport_modal .modal-content {
     background: #fff; border-radius: 8px; width: 90%;
     max-width: 800px; height: 70vh;
     display: flex; flex-direction: column;
 }
-.modal-header {
+#airport_modal .modal-header {
     padding: 15px 20px; border-bottom: 1px solid #eee;
     display: flex; justify-content: space-between; align-items: center;
 }
-.modal-header h3 { margin: 0; font-size: 18px; }
-.modal-close {
+#airport_modal .modal-header h3 { margin: 0; font-size: 18px; }
+#airport_modal .modal-close {
     background: none; border: none; font-size: 24px;
     cursor: pointer; color: #888;
 }
-.modal-body {
+#airport_modal .modal-body {
     display: flex; flex-grow: 1; overflow: hidden;
 }
-.modal-tabs {
+#airport_modal .modal-tabs {
     flex-basis: 150px; border-right: 1px solid #eee;
     overflow-y: auto; background: #f9f9f9;
 }
-.modal-tabs button {
+#airport_modal .modal-tabs button {
     display: block; width: 100%; text-align: left;
     padding: 15px 20px; border: none; background: none;
     font-size: 15px; font-weight: 600; cursor: pointer;
 }
-.modal-tabs button.active { background: #fff; color: #004a99; }
-.modal-list { flex-grow: 1; overflow-y: auto; padding: 10px 20px; }
-.modal-list .country-group { margin-bottom: 15px; }
-.modal-list .country-name {
+#airport_modal .modal-tabs button.active { background: #fff; color: #004a99; }
+#airport_modal .modal-list { flex-grow: 1; overflow-y: auto; padding: 10px 20px; }
+#airport_modal .modal-list .country-group { margin-bottom: 15px; }
+#airport_modal .modal-list .country-name {
     font-size: 16px; font-weight: bold; color: #333;
     padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px;
 }
-.modal-list .city-item {
+#airport_modal .modal-list .city-item {
     padding: 12px 10px; border-radius: 6px; cursor: pointer;
     display: flex; justify-content: space-between;
 }
-.modal-list .city-item:hover { background-color: #f4f7f6; }
-.modal-list .city-item .city-name { font-size: 15px; }
-.modal-list .city-item .city-code { font-weight: 500; color: #004a99; }
-.continent-pane { display: none; }
-.continent-pane.active { display: block; }
+#airport_modal .modal-list .city-item:hover { background-color: #f4f7f6; }
+#airport_modal .modal-list .city-item .city-name { font-size: 15px; }
+#airport_modal .modal-list .city-item .city-code { font-weight: 500; color: #004a99; }
+#airport_modal .continent-pane { display: none; }
+#airport_modal .continent-pane.active { display: block; }

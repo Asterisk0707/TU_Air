@@ -3,9 +3,10 @@
 
 from . import reservation_bp
 from ..extensions import db
-from ..models import Booking, Payment, Passenger, Flight_Seat_Availability
+from ..models import Booking, Payment, Passenger, Flight_Seat_Availability, Boarding_Pass, Flight, Seat
 from flask import render_template, request, flash, redirect, url_for, g, session
 import datetime
+import re
 
 @reservation_bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -20,7 +21,7 @@ def index():
         # (DB에서 Booking_ID로 예약 조회)
         booking = Booking.query.get(booking_id)
         
-        if booking:
+        if booking and booking.Status not in ['Canceled', 'Partial_Canceled']:
             # (찾았으면, 상세 페이지로 이동)
             return redirect(url_for('reservation.details', booking_id=booking.Booking_ID))
         else:
@@ -42,9 +43,29 @@ def details(booking_id):
         flash('본인의 예약만 조회할 수 있습니다.')
         return redirect(url_for('main.home'))
 
+    # [!!!] (R5) (신규) 각 여정의 체크인(탑승권) 여부 확인 [!!!]
+    outbound_is_checked_in = False
+    inbound_is_checked_in = False
+    
+    # (탑승객 중 1명이라도 탑승권이 있으면, 해당 여정은 체크인된 것으로 간주)
+    pax_out_sample = Passenger.query.filter_by(
+        Booking_ID=booking.Booking_ID, Flight_ID=booking.Outbound_Flight_ID
+    ).first()
+    if pax_out_sample and pax_out_sample.boarding_pass:
+        outbound_is_checked_in = True
+        
+    if booking.return_flight:
+        pax_in_sample = Passenger.query.filter_by(
+            Booking_ID=booking.Booking_ID, Flight_ID=booking.Return_Flight_ID
+        ).first()
+        if pax_in_sample and pax_in_sample.boarding_pass:
+            inbound_is_checked_in = True
+
     return render_template('reservation_details.html', 
                            booking=booking,
-                           now=datetime.datetime.now())
+                           now=datetime.datetime.now(),
+                           outbound_is_checked_in=outbound_is_checked_in,
+                           inbound_is_checked_in=inbound_is_checked_in)
 
 # [!!!] (신규) 환불금 계산을 위한 헬퍼 함수 [!!!]
 # (cancel_booking 함수 *위에* 이 함수를 추가해 주세요)
@@ -131,6 +152,7 @@ def cancel_booking(booking_id):
                     outbound_flight.Departure_Time, 
                     now
                 )
+                payment.Refund_Date = now
                 db.session.add(payment)
         # --- (R4) 부분 취소 로직 (가는 편 출발 이후 ~ 오는 편 출발 이전) ---
         elif inbound_flight and (now > outbound_flight.Departure_Time and now < inbound_flight.Departure_Time):
@@ -171,6 +193,7 @@ def cancel_booking(booking_id):
             
                 # (기존 환불액이 0.00이므로, 그냥 덮어씀)
                 payment.refunded_amount = refund_for_inbound
+                payment.Refund_Date = now
                 db.session.add(payment)
 
         # --- (취소 불가) ---
@@ -188,3 +211,45 @@ def cancel_booking(booking_id):
         flash(f'예약 취소 중 오류가 발생했습니다: {e}')
         
     return redirect(url_for('reservation.details', booking_id=booking_id))
+
+# [!!!] (R1) (수정) 탑승권 '리스트' 보기 (방향별) [!!!]
+@reservation_bp.route('/<string:booking_id>/boarding_pass/<string:direction>')
+def view_boarding_pass_list(booking_id, direction):
+    """ (R1) 이 예약의 '가는 편' 또는 '오는 편' 탑승권 리스트를 표시합니다. """
+    
+    booking = Booking.query.get_or_404(booking_id)
+    
+    # (권한 확인)
+    if booking.Member_ID and (not g.user or booking.Member_ID != g.user.Member_ID):
+        flash('본인의 탑승권만 조회할 수 있습니다.')
+        return redirect(url_for('main.home'))
+            
+    # (방향에 따라 항공편 ID와 객체 설정)
+    if direction == 'outbound':
+        current_flight_id = booking.Outbound_Flight_ID
+        current_flight = booking.outbound_flight
+        direction_label = '가는 편'
+    elif direction == 'inbound' and booking.return_flight:
+        current_flight_id = booking.Return_Flight_ID
+        current_flight = booking.return_flight
+        direction_label = '오는 편'
+    else:
+        flash('잘못된 여정입니다.')
+        return redirect(url_for('reservation.details', booking_id=booking_id))
+
+    # (해당 여정의 모든 탑승객/탑승권 정보 로드)
+    passengers_for_direction = Passenger.query.filter_by(
+        Booking_ID=booking_id, Flight_ID=current_flight_id
+    ).all()
+    
+    # (체크인 여부 확인)
+    if not passengers_for_direction or not passengers_for_direction[0].boarding_pass:
+        flash(f'[{direction_label}] 여정이 아직 체크인되지 않았습니다.')
+        return redirect(url_for('reservation.details', booking_id=booking_id))
+
+    return render_template('boarding_pass_list.html',
+                           booking=booking,
+                           flight=current_flight,
+                           passengers=passengers_for_direction,
+                           direction_label=direction_label)
+

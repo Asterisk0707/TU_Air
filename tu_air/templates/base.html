@@ -29,6 +29,10 @@
                    class="{{ 'active' if request.endpoint.startswith('reservation.') else '' }}">
                    예약 조회
                 </a>
+                <a href="{{ url_for('checkin.index') }}"
+                   class="{{ 'active' if request.endpoint.startswith('checkin.') else '' }}">
+                   체크인
+                </a>
             </nav>
             
             <div class="user-nav">
